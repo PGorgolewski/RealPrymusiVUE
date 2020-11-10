@@ -1,22 +1,11 @@
 <template>
- <div class="container-fluid">
-   <nav class="navbar navbar-light bg-light">
-    <span class="navbar-brand mb-0 h1">Participants</span>
-  </nav>
-  <div class="app-content">
-    <div class="app-list">
-      <h1>List</h1>
-      <div v-if="participants.length > 0" class="app-list-constent">
-        <div v-for="participant in participants" v-bind:key="participant.id">
-          {{ participant.name }} {{ participant.surname}} 
-          <button v-on:click="onRemove(participant)" class="btn btn-danger" type="button">Remove</button>
-        </div>
-      </div>
-      <div class="alert alert-warning" role="alert" v-else>
-        Noone here :c 
-      </div>
-    </div>
-    <div class="app-add-form">
+<div id="container-fluid">
+    <nav class="navbar navbar-light bg-light">
+      <span class="navbar-text">
+        Participants list
+      </span>
+    </nav>
+    <participants-list v-bind:participants="participants" v-on:deleteParticipant='deleteParticipant($event)'></participants-list>
       <form v-on:submit.prevent="onSubmit()">
         <h1>Add participant</h1>
         <div class="form-group">
@@ -35,32 +24,30 @@
 </template>
 
 <script>
-  export default {
-    data: function () {
-      return {
-        participants: [],
-        newParticipantName: '',
-        newParticipantSurname: '',
-      }
-    },
-    methods: {
-      onSubmit: function (){
-        const newParticipant = {
-          name: this.newParticipantName,
-          surname: this.newParticipantSurname,
-          id: Math.random(),
-        }
-        this.participants.push(newParticipant);
-        this.newParticipantSurname = '';
-        this.newParticipantName = '';
-      },
-      onRemove: function (participantToRemove){
-        this.participants = this.participants.filter((participant) => {
-          return participant.id !== participantToRemove.id;
-        });
-      }
+import ParticipantsList from './components/ParticipantsList.vue';
+
+export default {
+  components: {ParticipantsList},
+  data: function (){
+    return {
+      participants: [],
+      newParticipantName: null,
+      newParticipantLastName: null,
     }
-  };
+  }, 
+  methods: {
+    addParticipant: function(){
+      var newParticipant = { id: Math.random()*1000, name: this.newParticipantName, lastName: this.newParticipantLastName };
+      this.participants.push(newParticipant);
+      this.newParticipantName = null;
+      this.newParticipantLastName = null;
+    },
+    deleteParticipant: function(participant){
+      this.participants = this.participants.filter((added) => added.id !== participant.id);
+    }
+  }
+}
+
 </script>
 
 <style>
